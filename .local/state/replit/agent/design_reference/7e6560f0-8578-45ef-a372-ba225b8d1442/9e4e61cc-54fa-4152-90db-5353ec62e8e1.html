@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat de Comunicación - Asistente IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#1976D2',
+                        'user-bubble': '#E3F2FD',
+                        'ai-bubble': '#FFFFFF',
+                        'background': '#F8F9FA',
+                    },
+                    animation: {
+                        'typing': 'typing 1.5s infinite',
+                        'fadeIn': 'fadeIn 0.3s ease-in',
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message-container {
+            animation: fadeIn 0.3s ease-in;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-inter bg-background h-screen flex flex-col">
+    <!-- @COMPONENT: ChatHeader -->
+    <header class="bg-white shadow-sm border-b border-gray-200 px-4 py-4 sm:px-6">
+        <div class="flex items-center justify-between max-w-4xl mx-auto">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                    <i class="fas fa-comments text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">Asistente de Comunicación</h1>
+                    <p class="text-sm text-gray-500">Especializado en temas de comunicación</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span class="text-sm text-gray-600 hidden sm:inline">En línea</span>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: ChatHeader -->
+
+    <!-- @COMPONENT: ChatContainer -->
+    <main class="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+        <!-- @COMPONENT: MessagesArea -->
+        <div id="messagesContainer" class="flex-1 overflow-y-auto scrollbar-hide px-4 py-6 sm:px-6">
+            <!-- Welcome Message -->
+            <div class="message-container mb-6">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="bg-ai-bubble rounded-2xl rounded-tl-md shadow-sm border border-gray-100 p-4 max-w-xs sm:max-w-md">
+                        <p class="text-gray-800 text-sm leading-relaxed">¡Hola! Soy tu asistente especializado en comunicación. Puedo ayudarte con temas como comunicación interpersonal, técnicas de presentación, comunicación organizacional y mucho más. ¿En qué te gustaría que te ayude hoy?</p>
+                        <span class="text-xs text-gray-500 mt-2 block">Ahora</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example User Message -->
+            <div class="message-container mb-6" data-mock="true">
+                <div class="flex items-start space-x-3 justify-end">
+                    <div class="bg-user-bubble rounded-2xl rounded-tr-md shadow-sm p-4 max-w-xs sm:max-w-md">
+                        <p class="text-gray-800 text-sm leading-relaxed" data-bind="user.message">¿Puedes explicarme qué es la comunicación asertiva?</p>
+                        <span class="text-xs text-gray-500 mt-2 block text-right">10:30 AM</span>
+                    </div>
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-gray-600 text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example AI Response -->
+            <div class="message-container mb-6" data-mock="true">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="bg-ai-bubble rounded-2xl rounded-tl-md shadow-sm border border-gray-100 p-4 max-w-xs sm:max-w-md">
+                        <p class="text-gray-800 text-sm leading-relaxed" data-bind="ai.response">La comunicación asertiva es un estilo de comunicación que te permite expresar tus ideas, sentimientos y necesidades de manera clara, directa y respetuosa. Se caracteriza por:</p>
+                        <ul class="mt-2 text-sm text-gray-800 space-y-1">
+                            <li>• Expresar opiniones sin agredir</li>
+                            <li>• Mantener respeto por los demás</li>
+                            <li>• Usar un tono firme pero amable</li>
+                            <li>• Escuchar activamente</li>
+                        </ul>
+                        <p class="text-gray-800 text-sm leading-relaxed mt-2">¿Te gustaría que profundice en algún aspecto específico?</p>
+                        <span class="text-xs text-gray-500 mt-2 block">10:31 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator (Hidden by default) -->
+            <div id="typingIndicator" class="message-container mb-6 hidden">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="bg-ai-bubble rounded-2xl rounded-tl-md shadow-sm border border-gray-100 p-4">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-typing"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-typing" style="animation-delay: 0.2s;"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-typing" style="animation-delay: 0.4s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MessagesArea -->
+
+        <!-- @COMPONENT: ChatInput -->
+        <div class="bg-white border-t border-gray-200 px-4 py-4 sm:px-6">
+            <div class="flex items-end space-x-3">
+                <div class="flex-1">
+                    <div class="relative">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Escribe tu pregunta sobre comunicación..." 
+                            class="w-full resize-none rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 pr-12 text-sm focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                            rows="1"
+                            maxlength="500"
+                            data-implementation="Auto-resize based on content, max 4 rows"></textarea>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-400">
+                            <span id="charCount">0</span>/500
+                        </div>
+                    </div>
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="text-red-500 text-xs mt-1 hidden">
+                        Ha ocurrido un error. Por favor, inténtalo de nuevo.
+                    </div>
+                </div>
+                <button 
+                    id="sendButton" 
+                    class="bg-primary hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full p-3 transition-colors duration-200 flex items-center justify-center"
+                    data-event="click:sendMessage"
+                    data-implementation="Should validate input and call API">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Suggestions -->
+            <div class="mt-3 flex flex-wrap gap-2">
+                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-2 rounded-full transition-colors" 
+                        data-suggestion="¿Qué es la escucha activa?">
+                    ¿Qué es la escucha activa?
+                </button>
+                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-2 rounded-full transition-colors hidden sm:inline-block" 
+                        data-suggestion="Técnicas de presentación">
+                    Técnicas de presentación
+                </button>
+                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-2 rounded-full transition-colors hidden sm:inline-block" 
+                        data-suggestion="Comunicación no verbal">
+                    Comunicación no verbal
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ChatInput -->
+    </main>
+    <!-- @END_COMPONENT: ChatContainer -->
+
+    <!-- @COMPONENT: ConnectionStatus -->
+    <div id="connectionStatus" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg hidden">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span class="text-sm">Sin conexión</span>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ConnectionStatus -->
+
+    <script>
+        (function() {
+            // TODO: Implement React state management for messages, loading, errors
+            // TODO: Integrate with existing Express.js backend
+            // TODO: Add proper error handling for API failures
+            
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const messagesContainer = document.getElementById('messagesContainer');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const charCount = document.getElementById('charCount');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Character counter
+            messageInput.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count;
+                
+                // Auto-resize textarea
+                this.style.height = 'auto';
+                const newHeight = Math.min(this.scrollHeight, 96); // Max 4 rows
+                this.style.height = newHeight + 'px';
+                
+                // Update send button state
+                sendButton.disabled = count === 0 || count > 500;
+            });
+
+            // Handle Enter key
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Send button click
+            sendButton.addEventListener('click', sendMessage);
+
+            // Quick suggestions
+            document.querySelectorAll('[data-suggestion]').forEach(button => {
+                button.addEventListener('click', function() {
+                    messageInput.value = this.dataset.suggestion;
+                    messageInput.dispatchEvent(new Event('input'));
+                    messageInput.focus();
+                });
+            });
+
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message || message.length > 500) return;
+
+                // Hide error message
+                errorMessage.classList.add('hidden');
+
+                // Add user message to chat
+                addMessage(message, 'user');
+
+                // Clear input
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                charCount.textContent = '0';
+                sendButton.disabled = true;
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                // TODO: Replace with actual API call to backend
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    // Mock AI response
+                    const responses = [
+                        "Excelente pregunta. La comunicación efectiva requiere práctica y técnicas específicas...",
+                        "Te explico paso a paso cómo mejorar este aspecto de la comunicación...",
+                        "Este es un tema fundamental en comunicación. Permíteme desglosarlo para ti..."
+                    ];
+                    const response = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(response, 'ai');
+                }, 2000);
+            }
+
+            function addMessage(content, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message-container mb-6';
+                
+                const time = new Date().toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                if (type === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="bg-user-bubble rounded-2xl rounded-tr-md shadow-sm p-4 max-w-xs sm:max-w-md">
+                                <p class="text-gray-800 text-sm leading-relaxed">${content}</p>
+                                <span class="text-xs text-gray-500 mt-2 block text-right">${time}</span>
+                            </div>
+                            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-user text-gray-600 text-sm"></i>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-robot text-white text-sm"></i>
+                            </div>
+                            <div class="bg-ai-bubble rounded-2xl rounded-tl-md shadow-sm border border-gray-100 p-4 max-w-xs sm:max-w-md">
+                                <p class="text-gray-800 text-sm leading-relaxed">${content}</p>
+                                <span class="text-xs text-gray-500 mt-2 block">${time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                typingIndicator.classList.remove('hidden');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                typingIndicator.classList.add('hidden');
+            }
+
+            // TODO: Implement connection monitoring
+            // TODO: Add proper error handling and retry logic
+            // TODO: Integrate with React components and state management
+        })();
+    </script>
+</body>
+</html>
